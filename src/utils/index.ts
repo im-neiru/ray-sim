@@ -1,1 +1,1 @@
-export { createRayCompute } from "./ray_compute";
+export * from "./ray_compute";
