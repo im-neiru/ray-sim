@@ -1,0 +1,16 @@
+@import url("./colors.css");
+
+svg.simulation {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--light-bg);
+}
+
+svg.simulation rect.x-axis {
+  fill: var(--x-axis-fill);
+}
+
+svg.simulation polygon.mirror {
+  fill: var(--mirror-fill);
+}
