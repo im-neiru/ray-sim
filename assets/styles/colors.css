@@ -2,4 +2,9 @@
   --light-bg: #d5cfcc;
   --x-axis-fill: #3e3c3d;
   --mirror-fill: #3778a9;
+
+  --slider-color: #ff9800;
+  --slider-color-light: #ffc107;
+  --slider-color-dark: #e65100;
+  --slider-color-highlight: #f2cf66;
 }

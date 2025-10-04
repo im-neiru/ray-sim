@@ -24,7 +24,8 @@
 
     "paths": {
       "@styles/*": ["./assets/styles/*"],
-      "@components": ["./src/components/index.ts"]
+      "@components": ["./src/components/index.ts"],
+      "@utils": ["./src/utils/index.ts"],
     }
   },
   "include": ["src"]

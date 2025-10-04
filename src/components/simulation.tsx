@@ -1,10 +1,11 @@
 import "@styles/simulation.css";
-import { createSignal, onCleanup, onMount } from "solid-js";
+import { createRayCompute } from "@utils";
+import { createSignal, createUniqueId, onCleanup, onMount } from "solid-js";
 import { Mirror } from "./mirror";
-import { NumberSlider } from "./slider";
 
 export function Simulation() {
   const [magnification, setMagnification] = createSignal(1.25);
+  const rayCompute = createRayCompute();
 
   let svgEl: SVGSVGElement | undefined;
   const [size, setSize] = createSignal({
@@ -53,18 +54,76 @@ export function Simulation() {
         <Mirror cx={0} cy={0} height={120} magnification={magnification} />
       </svg>
       <div class="ui">
-        <div class="bottom-panel">
-          <div>
-            <span>Magnification: {magnification().toFixed(2)}</span>
-            <NumberSlider
-              maximumValue={3}
-              minimumValue={1 / 3}
-              state={magnification}
-              setState={setMagnification}
-            />
-          </div>
-        </div>
+        <Controls rayCompute={rayCompute} />
       </div>
     </>
+  );
+}
+
+type ControlsProps = {
+  rayCompute: ReturnType<typeof createRayCompute>;
+};
+function Controls({ rayCompute }: ControlsProps) {
+  const focusId = createUniqueId();
+  const curveId = createUniqueId();
+
+  return (
+    <div class="controls">
+      <div class="control-part">
+        <label for={focusId}>Focal Length:</label>
+
+        <div>
+          <input
+            id={`${curveId}n`}
+            type="number"
+            min="0"
+            max="100"
+            step="0.01"
+            value={Math.min(rayCompute.focalLength(), 100).toFixed(2)}
+            on:input={(ev) => {
+              rayCompute.setFocalLength(
+                Number(Math.min(ev.target.valueAsNumber, 100).toFixed(2))
+              );
+            }}
+          />
+          <span>cm</span>
+        </div>
+      </div>
+
+      <div class="control-part">
+        <label for={curveId}>Curvature: </label>
+
+        <div>
+          <input
+            id={`${curveId}n`}
+            type="number"
+            min="0"
+            max="200"
+            step="0.01"
+            value={Math.min(rayCompute.radius(), 200).toFixed(2)}
+            on:input={(ev) => {
+              rayCompute.setFocalLength(
+                Number(Math.min(ev.target.valueAsNumber, 200).toFixed(2))
+              );
+            }}
+          />
+          <span>cm</span>
+        </div>
+      </div>
+
+      <input
+        id={curveId}
+        type="range"
+        min="0"
+        max="200"
+        step="0.01"
+        value={rayCompute.radius()}
+        on:input={(ev) => {
+          rayCompute.setRadius(
+            Number(Math.min(ev.target.valueAsNumber, 200).toFixed(2))
+          );
+        }}
+      />
+    </div>
   );
 }
