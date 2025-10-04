@@ -1,4 +1,4 @@
-@import url("./colors.css");
+@import url(./colors.css);
 
 svg.simulation {
   position: fixed;
@@ -7,10 +7,49 @@ svg.simulation {
   background-color: var(--light-bg);
 }
 
+div.ui {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: transparent;
+}
+
+div.ui > div.bottom-panel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 120px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 svg.simulation rect.x-axis {
   fill: var(--x-axis-fill);
 }
 
-svg.simulation polygon.mirror {
+svg.simulation path.mirror {
   fill: var(--mirror-fill);
+}
+
+div.slider-track {
+  position: relative;
+  height: 8px;
+  border-radius: 9999px;
+  background: #ab8f80;
+  user-select: none;
+  width: 300px;
+}
+
+div.slider-handle {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #3778a9;
+  cursor: pointer;
 }
