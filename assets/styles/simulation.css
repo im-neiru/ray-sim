@@ -51,14 +51,15 @@ div.control-part input[type="number"] {
   appearance: textfield;
   -moz-appearance: textfield;
   -webkit-appearance: none;
-  width: 52px;
-  padding: 4px 6px;
+  width: 48px;
+  padding: 4px 2px;
   font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 4px;
   background-color: #fff8;
   text-align: center;
   vertical-align: middle;
+  margin-left: 8px;
 }
 
 div.control-part input[type="number"]::-webkit-inner-spin-button,
