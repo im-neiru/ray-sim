@@ -1,12 +1,8 @@
-import './App.css';
+import "@styles/main.css";
+import { Simulation } from "./components/simulation";
 
 const App = () => {
-  return (
-    <div class="content">
-      <h1>Rsbuild with Solid</h1>
-      <p>Start building amazing things with Rsbuild.</p>
-    </div>
-  );
+  return <Simulation />;
 };
 
 export default App;
