@@ -33,7 +33,9 @@ svg.simulation rect.x-axis {
 }
 
 svg.simulation path.mirror {
-  fill: var(--mirror-fill);
+  stroke-width: 4px;
+  stroke: var(--mirror-fill);
+  fill: transparent;
 }
 
 div.control-part {
@@ -52,6 +54,21 @@ div.control-part input[type="number"] {
   -moz-appearance: textfield;
   -webkit-appearance: none;
   width: 48px;
+  padding: 4px 2px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff8;
+  text-align: center;
+  vertical-align: middle;
+  margin-left: 8px;
+}
+
+div.control-part select {
+  appearance: textfield;
+  -moz-appearance: textfield;
+  -webkit-appearance: none;
+  width: 72px;
   padding: 4px 2px;
   font-size: 14px;
   border: 1px solid #ccc;

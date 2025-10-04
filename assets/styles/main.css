@@ -9,6 +9,7 @@ body {
   font-size: 11pt;
 }
 
-input {
+input,
+select {
   font-family: "Josefin Sans", Inter, Avenir, Helvetica, Arial, sans-serif;
 }

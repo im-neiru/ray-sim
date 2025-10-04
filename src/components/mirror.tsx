@@ -1,31 +1,35 @@
-import { type Accessor, createMemo } from "solid-js";
+import type { createRayCompute } from "@utils";
+import { createMemo } from "solid-js";
 
 type MirrorProps = {
   cx: number;
   cy: number;
   height: number;
-  magnification: Accessor<number>;
+  rayCompute: ReturnType<typeof createRayCompute>;
 };
 
 export function Mirror(props: MirrorProps) {
-  const { cx, cy, height, magnification } = props;
+  const { cx, cy, height, rayCompute } = props;
 
   const d = createMemo(() => {
-    const height_half = height * 0.5;
-    const sagitta = (magnification() - 1) * height_half;
-    let curve = sagitta;
+    const halfHeight = height * 0.5;
+    const radiusRaw = rayCompute.radius() * 4;
+    const isConvex = rayCompute.isConvex();
 
-    if (Math.abs(sagitta) < 0.001) curve = 0;
+    const y1 = cy - halfHeight;
+    const y2 = cy + halfHeight;
 
-    const xFlat = cx;
-    const xCurve = cx + 10;
+    if (Math.abs(radiusRaw) < 0.001) {
+      return `M ${cx} ${y1} L ${cx} ${y2}`;
+    }
+
+    const radius = Math.abs(radiusRaw);
+
+    const sweepFlag = isConvex ? 0 : 1;
 
     return [
-      `M ${xFlat} ${cy - height_half}`,
-      `L ${xCurve} ${cy - height_half}`,
-      `Q ${xCurve + curve} ${cy} ${xCurve} ${cy + height_half}`,
-      `L ${xFlat} ${cy + height_half}`,
-      "Z",
+      `M ${cx} ${y1}`,
+      `A ${radius} ${radius} 0 0 ${sweepFlag} ${cx} ${y2}`,
     ].join(" ");
   });
 

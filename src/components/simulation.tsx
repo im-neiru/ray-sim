@@ -4,7 +4,6 @@ import { createSignal, createUniqueId, onCleanup, onMount } from "solid-js";
 import { Mirror } from "./mirror";
 
 export function Simulation() {
-  const [magnification, setMagnification] = createSignal(1.25);
   const rayCompute = createRayCompute();
 
   let svgEl: SVGSVGElement | undefined;
@@ -51,7 +50,7 @@ export function Simulation() {
           class="x-axis"
         />
 
-        <Mirror cx={0} cy={0} height={120} magnification={magnification} />
+        <Mirror cx={0} cy={0} height={200} rayCompute={rayCompute} />
       </svg>
       <div class="ui">
         <Controls rayCompute={rayCompute} />
@@ -66,6 +65,7 @@ type ControlsProps = {
 function Controls({ rayCompute }: ControlsProps) {
   const focusId = createUniqueId();
   const curveId = createUniqueId();
+  const mirrorTypeId = createUniqueId();
 
   return (
     <div class="controls">
@@ -76,13 +76,13 @@ function Controls({ rayCompute }: ControlsProps) {
           <input
             id={`${curveId}n`}
             type="number"
-            min="0"
+            min="2"
             max="100"
             step="0.01"
             value={Math.min(rayCompute.focalLength(), 100).toFixed(2)}
             on:input={(ev) => {
               rayCompute.setFocalLength(
-                Number(Math.min(ev.target.valueAsNumber, 100).toFixed(2))
+                Number(ev.target.valueAsNumber.toFixed(2))
               );
             }}
           />
@@ -97,13 +97,13 @@ function Controls({ rayCompute }: ControlsProps) {
           <input
             id={`${curveId}n`}
             type="number"
-            min="0"
+            min="1"
             max="200"
             step="0.01"
             value={Math.min(rayCompute.radius(), 200).toFixed(2)}
             on:input={(ev) => {
               rayCompute.setFocalLength(
-                Number(Math.min(ev.target.valueAsNumber, 200).toFixed(2))
+                Number(ev.target.valueAsNumber.toFixed(2))
               );
             }}
           />
@@ -114,16 +114,28 @@ function Controls({ rayCompute }: ControlsProps) {
       <input
         id={curveId}
         type="range"
-        min="0"
+        min="1"
         max="200"
         step="0.01"
         value={rayCompute.radius()}
         on:input={(ev) => {
-          rayCompute.setRadius(
-            Number(Math.min(ev.target.valueAsNumber, 200).toFixed(2))
-          );
+          rayCompute.setRadius(Number(ev.target.valueAsNumber.toFixed(2)));
         }}
       />
+      <div class="control-part">
+        <label for={mirrorTypeId}>Type: </label>
+
+        <select
+          value={String(rayCompute.isConvex())}
+          id={mirrorTypeId}
+          on:change={(ev) =>
+            rayCompute.setIsConvex(ev.currentTarget.value === "true")
+          }
+        >
+          <option value="true">Convex</option>
+          <option value="false">Concave</option>
+        </select>
+      </div>
     </div>
   );
 }
