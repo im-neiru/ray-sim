@@ -6,8 +6,11 @@ type Range = {
 };
 
 export const DISTANCE_RANGE: Range = { min: 30, max: 125 };
-export const HEIGHT_RANGE: Range = { min: 15, max: 32 };
-export const RADIUS_RANGE: Range = { min: 25, max: 200 };
+export const HEIGHT_RANGE: Range = { min: 4, max: 20 };
+export const RADIUS_RANGE: Range = { min: 64, max: 150 };
+export const CM_TO_PX = 4;
+export const OBJ_W_PX = 6;
+export const MIRROR_HEIGHT = 64;
 
 export function createRayCompute() {
   const [radius, setRadius] = createSignal(100);

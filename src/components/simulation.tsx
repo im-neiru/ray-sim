@@ -1,8 +1,11 @@
 import "@styles/simulation.css";
 import {
+  CM_TO_PX,
   createRayCompute,
   DISTANCE_RANGE,
   HEIGHT_RANGE,
+  MIRROR_HEIGHT,
+  OBJ_W_PX,
   RADIUS_RANGE,
 } from "@utils";
 import {
@@ -11,14 +14,8 @@ import {
   createUniqueId,
   onCleanup,
   onMount,
-  Show,
 } from "solid-js";
 import { Mirror } from "./mirror";
-
-const CM_TO_PX = 4;
-const OBJ_W_PX = 6;
-
-const MIRROR_OPENS_LEFT = true;
 
 export function Simulation() {
   const rayCompute = createRayCompute();
@@ -46,8 +43,7 @@ export function Simulation() {
     () => OBJ_W_PX * Math.abs(rayCompute.magnification())
   );
 
-  const screenXFromCm = (cm: number) =>
-    (MIRROR_OPENS_LEFT ? -1 : 1) * cm * CM_TO_PX;
+  const screenXFromCm = (cm: number) => cm * -CM_TO_PX;
 
   const objectX = createMemo(
     () => screenXFromCm(rayCompute.distance()) - OBJ_W_PX / 2
@@ -105,7 +101,12 @@ export function Simulation() {
           stroke-dasharray="5, 4"
         />
 
-        <Mirror cx={0} cy={0} height={80 * CM_TO_PX} rayCompute={rayCompute} />
+        <Mirror
+          cx={0}
+          cy={0}
+          height={MIRROR_HEIGHT * CM_TO_PX}
+          rayCompute={rayCompute}
+        />
         {/* Object */}
         <rect
           x={objectX()}
