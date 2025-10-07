@@ -128,7 +128,7 @@ div.ui div.stack {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 580px) {
   div.ui > div.controls {
     bottom: 12px;
 
