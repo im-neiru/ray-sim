@@ -81,12 +81,30 @@ export function createRayCompute() {
     const obj = objectPoint();
     const img = imagePoint();
     const hit: Point = { x: 0, y: obj.y };
-    const behind = makeBehindPoint(hit, img, Math.max(distance(), 30));
 
-    const result: RayData = { incident: [obj, hit], reflected: [hit, behind] };
+    const result: RayData = {
+      incident: [obj, hit],
+      reflected: [
+        hit,
+        makeBehindPoint(
+          hit,
+          img,
+          isConvex() ? Math.max(distance(), 30) : focalLength() + 8
+        ),
+      ],
+    };
 
     if (isVirtual()) {
-      result.extended = [hit, img];
+      result.extended = [
+        hit,
+        makeBehindPoint(
+          img,
+          hit,
+          Math.sqrt(
+            objectHeight() * objectHeight() + focalLength() * focalLength() + 8
+          )
+        ),
+      ];
     } else {
       result.reflected = [hit, img];
       result.extended = undefined;
@@ -104,8 +122,17 @@ export function createRayCompute() {
     const hitY = linearYAtX(obj, focus, 0);
     const hit: Point = { x: 0, y: hitY };
 
-    const behind = makeBehindPoint(hit, img, Math.max(distance(), 30));
-    const result: RayData = { incident: [obj, hit], reflected: [hit, behind] };
+    const result: RayData = {
+      incident: [obj, hit],
+      reflected: [
+        hit,
+        makeBehindPoint(
+          hit,
+          img,
+          isConvex() ? Math.max(distance(), 30) : focalLength()
+        ),
+      ],
+    };
 
     if (isVirtual()) {
       result.extended = [hit, img];
@@ -126,12 +153,28 @@ export function createRayCompute() {
 
     const hitY = linearYAtX(obj, center, 0);
     const hit: Point = { x: 0, y: hitY };
-    const behind = makeBehindPoint(hit, img, Math.max(distance(), 30));
 
-    const result: RayData = { incident: [obj, hit], reflected: [hit, behind] };
+    const result: RayData = {
+      incident: [obj, hit],
+      reflected: [
+        hit,
+        makeBehindPoint(
+          hit,
+          img,
+          isConvex() ? Math.max(distance(), 30) : radius() + 8
+        ),
+      ],
+    };
 
     if (isVirtual()) {
-      result.extended = [hit, img];
+      result.extended = [
+        hit,
+        makeBehindPoint(
+          img,
+          hit,
+          Math.sqrt(objectHeight() * objectHeight() + radius() * radius() + 8)
+        ),
+      ];
     } else {
       result.reflected = [hit, img];
       result.extended = undefined;
@@ -145,9 +188,19 @@ export function createRayCompute() {
     const img = imagePoint();
     const hit: Point = { x: 0, y: 0 };
 
-    const behind = makeBehindPoint(hit, img, Math.max(distance(), 30));
-
-    const result: RayData = { incident: [obj, hit], reflected: [hit, behind] };
+    const result: RayData = {
+      incident: [obj, hit],
+      reflected: [
+        hit,
+        makeBehindPoint(
+          hit,
+          img,
+          isConvex()
+            ? Math.max(distance(), 30)
+            : Math.max(focalLength() - 24, 20)
+        ),
+      ],
+    };
 
     if (isVirtual()) {
       result.extended = [hit, img];
