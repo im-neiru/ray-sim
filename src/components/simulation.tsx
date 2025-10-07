@@ -94,16 +94,6 @@ export function Simulation() {
           class="x-axis"
         />
 
-        {/* Y-axis */}
-        <line
-          x1={0}
-          y1={-150}
-          x2={0}
-          y2={150}
-          class="y-axis"
-          stroke-dasharray="5, 4"
-        />
-
         <Mirror
           cx={0}
           cy={0}
@@ -246,6 +236,7 @@ function Controls({ rayCompute }: ControlsProps) {
   return (
     <div class="controls" data-hide={hide()}>
       <button
+        type="button"
         class="show"
         on:click={() => {
           setHide(false);
@@ -254,11 +245,13 @@ function Controls({ rayCompute }: ControlsProps) {
         Show Controls
       </button>
       <button
+        type="button"
         class="close"
         on:click={() => {
           setHide(true);
         }}
       >
+        {/** biome-ignore lint/a11y/noSvgWithoutTitle: icon */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 256 256"

@@ -179,11 +179,6 @@ svg.simulation line.x-axis {
   stroke-width: 2;
 }
 
-svg.simulation line.y-axis {
-  stroke: var(--y-axis-fill);
-  stroke-width: 1;
-}
-
 svg.simulation path.mirror {
   stroke-width: 4px;
   stroke: var(--mirror-fill);
