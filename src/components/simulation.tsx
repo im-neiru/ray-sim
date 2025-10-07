@@ -33,12 +33,14 @@ export function Simulation() {
 
   onMount(() => {
     window.addEventListener("resize", resizeSvg);
+    window.addEventListener("orientationchange", resizeSvg);
     onCleanup(() => {
       window.removeEventListener("resize", resizeSvg);
+      window.removeEventListener("orientationchange", resizeSvg);
     });
   });
 
-  const xAxisLength = size().w - 64;
+  const xAxisLength = size().w > 512 ? size().w - 64 : size().w - 12;
 
   const imageWidthPx = createMemo(
     () => OBJ_W_PX * Math.abs(rayCompute.magnification())
@@ -239,154 +241,183 @@ function Controls({ rayCompute }: ControlsProps) {
   const mirrorTypeId = createUniqueId();
   const distanceId = createUniqueId();
   const heightId = createUniqueId();
+  const [hide, setHide] = createSignal(true);
 
   return (
-    <div class="controls">
-      <div>
-        <b>Mirror Options</b>
-        <div class="control-part">
-          <label for={focusId}>Focal Length:</label>
+    <div class="controls" data-hide={hide()}>
+      <button
+        class="show"
+        on:click={() => {
+          setHide(false);
+        }}
+      >
+        Show Controls
+      </button>
+      <button
+        class="close"
+        on:click={() => {
+          setHide(true);
+        }}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 256 256"
+          width={24}
+          height={24}
+        >
+          <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm37.66,130.34a8,8,0,0,1-11.32,11.32L128,139.31l-26.34,26.35a8,8,0,0,1-11.32-11.32L116.69,128,90.34,101.66a8,8,0,0,1,11.32-11.32L128,116.69l26.34-26.35a8,8,0,0,1,11.32,11.32L139.31,128Z" />
+        </svg>
+      </button>
 
-          <div>
-            <input
-              id={`${curveId}n`}
-              type="number"
-              min={RADIUS_RANGE.min / 2}
-              max={RADIUS_RANGE.max / 2}
-              step="0.01"
-              value={Math.min(
-                Math.abs(rayCompute.focalLength()),
-                RADIUS_RANGE.max / 2
-              ).toFixed(2)}
-              on:input={(ev) => {
-                rayCompute.setFocalLength(
-                  Number(ev.target.valueAsNumber.toFixed(2))
-                );
-              }}
-            />
-            <span>cm</span>
+      <div class="stack">
+        <div>
+          <b>Mirror Options</b>
+          <div class="control-part">
+            <label for={focusId}>Focal Length:</label>
+
+            <div>
+              <input
+                id={`${curveId}n`}
+                type="number"
+                min={RADIUS_RANGE.min / 2}
+                max={RADIUS_RANGE.max / 2}
+                step="0.01"
+                value={Math.min(
+                  Math.abs(rayCompute.focalLength()),
+                  RADIUS_RANGE.max / 2
+                ).toFixed(2)}
+                on:input={(ev) => {
+                  rayCompute.setFocalLength(
+                    Number(ev.target.valueAsNumber.toFixed(2))
+                  );
+                }}
+              />
+              <span>cm</span>
+            </div>
+          </div>
+
+          <div class="control-part">
+            <label for={curveId}>Curvature: </label>
+
+            <div>
+              <input
+                id={`${curveId}n`}
+                type="number"
+                min={RADIUS_RANGE.min}
+                max={RADIUS_RANGE.max}
+                step="0.01"
+                value={Math.min(
+                  Math.abs(rayCompute.radius()),
+                  RADIUS_RANGE.max
+                ).toFixed(2)}
+                on:input={(ev) => {
+                  rayCompute.setRadius(
+                    Number(ev.target.valueAsNumber.toFixed(2))
+                  );
+                }}
+              />
+              <span>cm</span>
+            </div>
+          </div>
+
+          <input
+            id={curveId}
+            type="range"
+            min={RADIUS_RANGE.min}
+            max={RADIUS_RANGE.max}
+            step="0.01"
+            value={rayCompute.radius()}
+            on:input={(ev) => {
+              rayCompute.setRadius(Number(ev.target.valueAsNumber.toFixed(2)));
+            }}
+          />
+          <div class="control-part">
+            <label for={mirrorTypeId}>Type: </label>
+
+            <select
+              value={String(rayCompute.isConvex())}
+              id={mirrorTypeId}
+              on:change={(ev) =>
+                rayCompute.setIsConvex(ev.currentTarget.value === "true")
+              }
+            >
+              <option value="true">Convex</option>
+              <option value="false">Concave</option>
+            </select>
           </div>
         </div>
+        <div>
+          <b>Object Options</b>
+          <div class="control-part">
+            <label for={distanceId}>Distance from mirror:</label>
 
-        <div class="control-part">
-          <label for={curveId}>Curvature: </label>
-
-          <div>
-            <input
-              id={`${curveId}n`}
-              type="number"
-              min={RADIUS_RANGE.min}
-              max={RADIUS_RANGE.max}
-              step="0.01"
-              value={Math.min(
-                Math.abs(rayCompute.radius()),
-                RADIUS_RANGE.max
-              ).toFixed(2)}
-              on:input={(ev) => {
-                rayCompute.setRadius(
-                  Number(ev.target.valueAsNumber.toFixed(2))
-                );
-              }}
-            />
-            <span>cm</span>
+            <div>
+              <input
+                id={`${distanceId}n`}
+                type="number"
+                min={DISTANCE_RANGE.min}
+                max={DISTANCE_RANGE.max}
+                step="0.01"
+                value={Math.abs(rayCompute.distance()).toFixed(2)}
+                on:input={(ev) => {
+                  rayCompute.setDistance(
+                    Number(ev.target.valueAsNumber.toFixed(2))
+                  );
+                }}
+              />
+              <span>cm</span>
+            </div>
           </div>
-        </div>
 
-        <input
-          id={curveId}
-          type="range"
-          min={RADIUS_RANGE.min}
-          max={RADIUS_RANGE.max}
-          step="0.01"
-          value={rayCompute.radius()}
-          on:input={(ev) => {
-            rayCompute.setRadius(Number(ev.target.valueAsNumber.toFixed(2)));
-          }}
-        />
-        <div class="control-part">
-          <label for={mirrorTypeId}>Type: </label>
+          <input
+            id={distanceId}
+            type="range"
+            min={DISTANCE_RANGE.min}
+            max={DISTANCE_RANGE.max}
+            step="0.01"
+            value={rayCompute.distance()}
+            on:input={(ev) => {
+              rayCompute.setDistance(
+                Number(ev.target.valueAsNumber.toFixed(2))
+              );
+            }}
+          />
 
-          <select
-            value={String(rayCompute.isConvex())}
-            id={mirrorTypeId}
-            on:change={(ev) =>
-              rayCompute.setIsConvex(ev.currentTarget.value === "true")
-            }
-          >
-            <option value="true">Convex</option>
-            <option value="false">Concave</option>
-          </select>
-        </div>
-      </div>
-      <div>
-        <b>Object Options</b>
-        <div class="control-part">
-          <label for={distanceId}>Distance from mirror:</label>
+          <div class="control-part">
+            <label for={heightId}>Height:</label>
 
-          <div>
-            <input
-              id={`${distanceId}n`}
-              type="number"
-              min={DISTANCE_RANGE.min}
-              max={DISTANCE_RANGE.max}
-              step="0.01"
-              value={Math.abs(rayCompute.distance()).toFixed(2)}
-              on:input={(ev) => {
-                rayCompute.setDistance(
-                  Number(ev.target.valueAsNumber.toFixed(2))
-                );
-              }}
-            />
-            <span>cm</span>
+            <div>
+              <input
+                id={`${heightId}n`}
+                type="number"
+                min={HEIGHT_RANGE.min}
+                max={HEIGHT_RANGE.max}
+                step="0.01"
+                value={Math.abs(rayCompute.objectHeight()).toFixed(2)}
+                on:input={(ev) => {
+                  rayCompute.setObjectHeight(
+                    Number(ev.target.valueAsNumber.toFixed(2))
+                  );
+                }}
+              />
+              <span>cm</span>
+            </div>
           </div>
+
+          <input
+            id={heightId}
+            type="range"
+            min={HEIGHT_RANGE.min}
+            max={HEIGHT_RANGE.max}
+            step="0.01"
+            value={rayCompute.objectHeight()}
+            on:input={(ev) => {
+              rayCompute.setObjectHeight(
+                Number(ev.target.valueAsNumber.toFixed(2))
+              );
+            }}
+          />
         </div>
-
-        <input
-          id={distanceId}
-          type="range"
-          min={DISTANCE_RANGE.min}
-          max={DISTANCE_RANGE.max}
-          step="0.01"
-          value={rayCompute.distance()}
-          on:input={(ev) => {
-            rayCompute.setDistance(Number(ev.target.valueAsNumber.toFixed(2)));
-          }}
-        />
-
-        <div class="control-part">
-          <label for={heightId}>Height:</label>
-
-          <div>
-            <input
-              id={`${heightId}n`}
-              type="number"
-              min={HEIGHT_RANGE.min}
-              max={HEIGHT_RANGE.max}
-              step="0.01"
-              value={Math.abs(rayCompute.objectHeight()).toFixed(2)}
-              on:input={(ev) => {
-                rayCompute.setObjectHeight(
-                  Number(ev.target.valueAsNumber.toFixed(2))
-                );
-              }}
-            />
-            <span>cm</span>
-          </div>
-        </div>
-
-        <input
-          id={heightId}
-          type="range"
-          min={HEIGHT_RANGE.min}
-          max={HEIGHT_RANGE.max}
-          step="0.01"
-          value={rayCompute.objectHeight()}
-          on:input={(ev) => {
-            rayCompute.setObjectHeight(
-              Number(ev.target.valueAsNumber.toFixed(2))
-            );
-          }}
-        />
       </div>
     </div>
   );
