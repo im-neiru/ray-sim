@@ -12,6 +12,7 @@ import {
   createMemo,
   createSignal,
   createUniqueId,
+  For,
   onCleanup,
   onMount,
 } from "solid-js";
@@ -116,7 +117,7 @@ export function Simulation() {
           fill="#fff"
           stroke="#222"
         />
-        {/* Image */}
+
         <rect
           x={imageX()}
           y={imageY()}
@@ -126,6 +127,45 @@ export function Simulation() {
           stroke="#222"
           opacity={0.5}
         />
+        <For
+          each={[
+            rayCompute.pfRay(),
+            rayCompute.fpRay(),
+            rayCompute.ccRay(),
+            rayCompute.vRay(),
+          ]}
+        >
+          {(ray) => {
+            const toPointStr = (p: { x: number; y: number }) =>
+              `${p.x * CM_TO_PX},${p.y * CM_TO_PX}`;
+
+            return (
+              <>
+                {ray.incident && (
+                  <polyline
+                    points={ray.incident.map((p) => toPointStr(p)).join(" ")}
+                    class="ray-incident"
+                  />
+                )}
+
+                {ray.reflected && (
+                  <polyline
+                    points={ray.reflected.map((p) => toPointStr(p)).join(" ")}
+                    class="ray-reflected"
+                  />
+                )}
+                {ray.extended && (
+                  <polyline
+                    points={ray.extended.map((p) => toPointStr(p)).join(" ")}
+                    class="ray-reflected"
+                    stroke-dasharray="4 4"
+                  />
+                )}
+              </>
+            );
+          }}
+        </For>
+
         <circle
           fill="#f42490"
           cx={

@@ -54,6 +54,16 @@ svg.simulation path.mirror {
   fill: transparent;
 }
 
+svg.simulation polyline.ray-incident {
+  stroke: var(--ray-incident);
+  stroke-width: 4px;
+}
+
+svg.simulation polyline.ray-reflected {
+  stroke: var(--ray-reflected);
+  stroke-width: 2px;
+}
+
 div.control-part {
   flex: 1;
   display: flex;

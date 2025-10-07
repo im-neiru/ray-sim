@@ -8,4 +8,7 @@
   --slider-color-light: #ffc107;
   --slider-color-dark: #e65100;
   --slider-color-highlight: #f2cf66;
+
+  --ray-incident: #23b6be;
+  --ray-reflected: #c32424;
 }
