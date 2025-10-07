@@ -38,8 +38,14 @@ div.ui > div.controls > div {
   gap: 4px;
 }
 
-svg.simulation rect.x-axis {
-  fill: var(--x-axis-fill);
+svg.simulation line.x-axis {
+  stroke: var(--x-axis-fill);
+  stroke-width: 2;
+}
+
+svg.simulation line.y-axis {
+  stroke: var(--y-axis-fill);
+  stroke-width: 1;
 }
 
 svg.simulation path.mirror {

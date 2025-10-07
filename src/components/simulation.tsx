@@ -85,15 +85,26 @@ export function Simulation() {
           return false;
         }}
       >
-        <rect x={0} y={-150} width={1} height={300} fill="#888" />
         {/* X-axis */}
-        <rect
-          x={-xAxisLength / 2}
-          y={-1}
-          width={xAxisLength}
-          height={2}
+        <line
+          x1={-xAxisLength / 2}
+          y1={0}
+          x2={xAxisLength / 2}
+          y2={0}
+          stroke-dasharray="5, 4"
           class="x-axis"
         />
+
+        {/* Y-axis */}
+        <line
+          x1={0}
+          y1={-150}
+          x2={0}
+          y2={150}
+          class="y-axis"
+          stroke-dasharray="5, 4"
+        />
+
         <Mirror cx={0} cy={0} height={80 * CM_TO_PX} rayCompute={rayCompute} />
         {/* Object */}
         <rect
