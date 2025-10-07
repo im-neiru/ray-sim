@@ -1,4 +1,4 @@
-import type { createRayCompute } from "@utils";
+import { CM_TO_PX, type createRayCompute } from "@utils";
 import { createMemo } from "solid-js";
 
 type MirrorProps = {
@@ -13,7 +13,7 @@ export function Mirror(props: MirrorProps) {
 
   const d = createMemo(() => {
     const halfHeight = height * 0.5;
-    const radiusRaw = rayCompute.radius() * 4;
+    const radiusRaw = rayCompute.radius() * CM_TO_PX;
     const isConvex = rayCompute.isConvex();
 
     const y1 = cy - halfHeight;

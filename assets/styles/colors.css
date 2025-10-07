@@ -1,10 +1,14 @@
 :root {
   --light-bg: #d5cfcc;
   --x-axis-fill: #3e3c3d;
+  --y-axis-fill: #615e5f;
   --mirror-fill: #0c30e5;
 
   --slider-color: #ff9800;
   --slider-color-light: #ffc107;
   --slider-color-dark: #e65100;
   --slider-color-highlight: #f2cf66;
+
+  --ray-incident: #23b6be;
+  --ray-reflected: #c32424;
 }

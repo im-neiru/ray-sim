@@ -1,24 +1,22 @@
 import "@styles/simulation.css";
 import {
+  CM_TO_PX,
   createRayCompute,
   DISTANCE_RANGE,
   HEIGHT_RANGE,
+  MIRROR_HEIGHT,
+  OBJ_W_PX,
   RADIUS_RANGE,
 } from "@utils";
 import {
   createMemo,
   createSignal,
   createUniqueId,
+  For,
   onCleanup,
   onMount,
-  Show,
 } from "solid-js";
 import { Mirror } from "./mirror";
-
-const CM_TO_PX = 4;
-const OBJ_W_PX = 6;
-
-const MIRROR_OPENS_LEFT = true;
 
 export function Simulation() {
   const rayCompute = createRayCompute();
@@ -46,8 +44,7 @@ export function Simulation() {
     () => OBJ_W_PX * Math.abs(rayCompute.magnification())
   );
 
-  const screenXFromCm = (cm: number) =>
-    (MIRROR_OPENS_LEFT ? -1 : 1) * cm * CM_TO_PX;
+  const screenXFromCm = (cm: number) => cm * -CM_TO_PX;
 
   const objectX = createMemo(
     () => screenXFromCm(rayCompute.distance()) - OBJ_W_PX / 2
@@ -85,19 +82,32 @@ export function Simulation() {
           return false;
         }}
       >
-        <rect x={0} y={-150} width={1} height={300} fill="#888" />
-
         {/* X-axis */}
-        <rect
-          x={-xAxisLength / 2}
-          y={-1}
-          width={xAxisLength}
-          height={2}
+        <line
+          x1={-xAxisLength / 2}
+          y1={0}
+          x2={xAxisLength / 2}
+          y2={0}
+          stroke-dasharray="5, 4"
           class="x-axis"
         />
 
-        <Mirror cx={0} cy={0} height={80 * CM_TO_PX} rayCompute={rayCompute} />
+        {/* Y-axis */}
+        <line
+          x1={0}
+          y1={-150}
+          x2={0}
+          y2={150}
+          class="y-axis"
+          stroke-dasharray="5, 4"
+        />
 
+        <Mirror
+          cx={0}
+          cy={0}
+          height={MIRROR_HEIGHT * CM_TO_PX}
+          rayCompute={rayCompute}
+        />
         {/* Object */}
         <rect
           x={objectX()}
@@ -108,18 +118,53 @@ export function Simulation() {
           stroke="#222"
         />
 
-        {/* Image */}
-        <Show when={rayCompute.isConvex() ? true : imageX() < 0}>
-          <rect
-            x={imageX()}
-            y={imageY()}
-            width={imageWidthPx()}
-            height={imageHeightPx()}
-            fill="#fff"
-            stroke="#222"
-            opacity={0.5}
-          />
-        </Show>
+        <rect
+          x={imageX()}
+          y={imageY()}
+          width={imageWidthPx()}
+          height={imageHeightPx()}
+          fill="#fff"
+          stroke="#222"
+          opacity={0.5}
+        />
+        <For
+          each={[
+            rayCompute.pfRay(),
+            rayCompute.fpRay(),
+            rayCompute.ccRay(),
+            rayCompute.vRay(),
+          ]}
+        >
+          {(ray) => {
+            const toPointStr = (p: { x: number; y: number }) =>
+              `${p.x * CM_TO_PX},${p.y * CM_TO_PX}`;
+
+            return (
+              <>
+                {ray.incident && (
+                  <polyline
+                    points={ray.incident.map((p) => toPointStr(p)).join(" ")}
+                    class="ray-incident"
+                  />
+                )}
+
+                {ray.reflected && (
+                  <polyline
+                    points={ray.reflected.map((p) => toPointStr(p)).join(" ")}
+                    class="ray-reflected"
+                  />
+                )}
+                {ray.extended && (
+                  <polyline
+                    points={ray.extended.map((p) => toPointStr(p)).join(" ")}
+                    class="ray-reflected"
+                    stroke-dasharray="4 4"
+                  />
+                )}
+              </>
+            );
+          }}
+        </For>
 
         <circle
           fill="#f42490"
@@ -144,7 +189,6 @@ export function Simulation() {
         >
           F
         </text>
-
         <circle
           fill="#6224f4"
           cx={
@@ -167,6 +211,16 @@ export function Simulation() {
           font-size="12pt"
         >
           C
+        </text>
+        <circle fill="#24e85b" cx={0} cy={0} r={4} />
+        <text
+          x={0}
+          y={24}
+          text-anchor="middle"
+          font-family="Josefin Sans"
+          font-size="12pt"
+        >
+          V
         </text>
       </svg>
       <div class="ui">
