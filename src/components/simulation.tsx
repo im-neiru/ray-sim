@@ -86,7 +86,6 @@ export function Simulation() {
         }}
       >
         <rect x={0} y={-150} width={1} height={300} fill="#888" />
-
         {/* X-axis */}
         <rect
           x={-xAxisLength / 2}
@@ -95,9 +94,7 @@ export function Simulation() {
           height={2}
           class="x-axis"
         />
-
         <Mirror cx={0} cy={0} height={80 * CM_TO_PX} rayCompute={rayCompute} />
-
         {/* Object */}
         <rect
           x={objectX()}
@@ -107,20 +104,16 @@ export function Simulation() {
           fill="#fff"
           stroke="#222"
         />
-
         {/* Image */}
-        <Show when={rayCompute.isConvex() ? true : imageX() < 0}>
-          <rect
-            x={imageX()}
-            y={imageY()}
-            width={imageWidthPx()}
-            height={imageHeightPx()}
-            fill="#fff"
-            stroke="#222"
-            opacity={0.5}
-          />
-        </Show>
-
+        <rect
+          x={imageX()}
+          y={imageY()}
+          width={imageWidthPx()}
+          height={imageHeightPx()}
+          fill="#fff"
+          stroke="#222"
+          opacity={0.5}
+        />
         <circle
           fill="#f42490"
           cx={
@@ -144,7 +137,6 @@ export function Simulation() {
         >
           F
         </text>
-
         <circle
           fill="#6224f4"
           cx={
@@ -167,6 +159,16 @@ export function Simulation() {
           font-size="12pt"
         >
           C
+        </text>
+        <circle fill="#24e85b" cx={0} cy={0} r={4} />
+        <text
+          x={0}
+          y={24}
+          text-anchor="middle"
+          font-family="Josefin Sans"
+          font-size="12pt"
+        >
+          V
         </text>
       </svg>
       <div class="ui">
