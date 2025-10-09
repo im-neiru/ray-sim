@@ -1,3 +1,3 @@
 # Ray Diagram Simulator: Curve Mirrors
 
-![screenshot](./assets\images\screenshot.png)
+![screenshot](./assets/images/screenshot.png)
