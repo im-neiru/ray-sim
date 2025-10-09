@@ -130,7 +130,7 @@ div.ui div.stack {
   }
 }
 
-@media (max-width: 580px) {
+@media (max-width: 830px) {
   div.ui > div.controls {
     bottom: 12px;
 
@@ -181,6 +181,10 @@ div.ui > div.controls div.ray-switch {
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
+}
+
+div.ui > div.controls b {
+  text-wrap: nowrap;
 }
 
 div.ui > div.controls div.ray-switch > label {

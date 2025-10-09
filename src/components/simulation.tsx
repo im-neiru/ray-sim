@@ -413,6 +413,7 @@ function Controls({ rayCompute }: ControlsProps) {
           />
         </div>
         <div>
+          <b>Rays Visibility</b>
           <RaySwitch rayCompute={rayCompute} ray="pf" />
           <RaySwitch rayCompute={rayCompute} ray="fp" />
           <RaySwitch rayCompute={rayCompute} ray="cc" />
