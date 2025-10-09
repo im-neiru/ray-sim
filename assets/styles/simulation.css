@@ -27,6 +27,7 @@ div.ui > div.controls {
   margin-bottom: 12px;
   flex-direction: column;
 
+  /* biome-ignore lint/suspicious/noDuplicateProperties: allow duplicates */
   left: 50%;
   transform: translateX(-50%);
 }
@@ -51,6 +52,7 @@ div.ui > div.controls > button.show {
   box-shadow: 10px 10px 5px -5px rgba(0, 0, 0, 0.35);
   -webkit-box-shadow: 10px 10px 5px -5px rgba(0, 0, 0, 0.35);
   -moz-box-shadow: 10px 10px 5px -5px rgba(0, 0, 0, 0.35);
+  /* biome-ignore lint/suspicious/noDuplicateProperties: allow duplicates */
   visibility: hidden;
 
   transition-duration: 200ms;
@@ -172,6 +174,17 @@ div.ui > div.controls > div.stack > div {
   align-items: flex-start;
   margin-bottom: 12px;
   gap: 4px;
+}
+
+div.ui > div.controls div.ray-switch {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+div.ui > div.controls div.ray-switch > label {
+  text-wrap: nowrap;
 }
 
 svg.simulation line.x-axis {
