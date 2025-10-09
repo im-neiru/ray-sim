@@ -51,15 +51,18 @@ export function createRayCompute() {
     return -(v / u);
   });
 
-  const imageHeight = createMemo(() => {
-    const m = magnification();
-    if (!Number.isFinite(m)) return Infinity;
-    return objectHeight() * m;
-  });
-
   const isVirtual = createMemo(
     () => imageDistance() < 0 || !Number.isFinite(imageDistance())
   );
+
+  const imageHeight = createMemo(() => {
+    const m = magnification();
+    if (!Number.isFinite(m)) return Infinity;
+
+    const h = objectHeight() * m;
+
+    return h;
+  });
 
   const objectPoint = createMemo<Point>(() => ({
     x: -distance(),
@@ -137,7 +140,10 @@ export function createRayCompute() {
     const img = imagePoint();
 
     if (isConvex()) {
-      const angleR = Math.atan2(imageHeight(), radius() + distance());
+      const angleR = Math.atan2(
+        -Math.abs(imageHeight()),
+        radius() + distance()
+      );
       const angleF = Math.asin((focalLength() * Math.sin(angleR)) / radius());
       const angleS = Math.PI - (angleF + angleR);
 
@@ -169,7 +175,8 @@ export function createRayCompute() {
         return undefined;
       }
 
-      const angleR = Math.PI - Math.atan2(-imageHeight(), focalLength());
+      const angleR =
+        Math.atan2(-Math.abs(imageHeight()), focalLength()) - Math.PI;
       const angleF = Math.asin((focalLength() * Math.sin(angleR)) / radius());
       const angleS = Math.PI - (angleF + angleR);
 
@@ -185,7 +192,7 @@ export function createRayCompute() {
           hit,
           {
             x: img.x + 2,
-            y: hit.y,
+            y: -imageHeight(),
           },
         ],
       };
