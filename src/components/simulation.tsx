@@ -4,18 +4,17 @@ import {
   createRayCompute,
   DISTANCE_RANGE,
   HEIGHT_RANGE,
-  OBJ_W_PX,
   RADIUS_RANGE,
   type RayVisibility,
 } from "@utils";
 import {
-  createMemo,
   createSignal,
   createUniqueId,
   For,
   onCleanup,
   onMount,
 } from "solid-js";
+import { Candle } from "./candle";
 import { Mirror } from "./mirror";
 
 export function Simulation() {
@@ -42,32 +41,8 @@ export function Simulation() {
 
   const xAxisLength = size().w > 512 ? size().w - 64 : size().w - 12;
 
-  const imageWidthPx = createMemo(
-    () => OBJ_W_PX * Math.abs(rayCompute.magnification())
-  );
-
-  const screenXFromCm = (cm: number) => cm * -CM_TO_PX;
-
-  const objectX = createMemo(
-    () => screenXFromCm(rayCompute.distance()) - OBJ_W_PX / 2
-  );
-
-  const imageX = createMemo(
-    () => screenXFromCm(rayCompute.imageDistance()) - imageWidthPx() / 2
-  );
-
-  const objectHeightPx = createMemo(
-    () => Math.abs(rayCompute.objectHeight()) * CM_TO_PX
-  );
-
-  const imageHeightPx = createMemo(
-    () => Math.abs(rayCompute.imageHeight()) * CM_TO_PX
-  );
-
-  const imageY = createMemo(() => {
-    const h = rayCompute.imageHeight();
-    return h >= 0 ? -h * CM_TO_PX : 0;
-  });
+  const incidentArrow = createUniqueId();
+  const reflectedArrow = createUniqueId();
 
   return (
     <>
@@ -84,6 +59,38 @@ export function Simulation() {
           return false;
         }}
       >
+        <defs>
+          <linearGradient id="flameGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="yellow" />
+            <stop offset="60%" stop-color="orange" />
+            <stop offset="100%" stop-color="red" />
+          </linearGradient>
+          <marker
+            id={incidentArrow}
+            viewBox="0 0 6 6"
+            refX="3"
+            refY="3"
+            marker-width="6"
+            marker-height="6"
+            orient="auto-start-reverse"
+            fill="var(--ray-incident)"
+          >
+            <path d="M 0 0 L 6 3 L 0 6 z" />
+          </marker>
+          <marker
+            id={reflectedArrow}
+            viewBox="0 0 6 6"
+            refX="3"
+            refY="3"
+            marker-width="6"
+            marker-height="6"
+            orient="auto-start-reverse"
+            fill="var(--ray-reflected)"
+          >
+            <path d="M 0 0 L 6 3 L 0 6 z" />
+          </marker>
+        </defs>
+
         {/* X-axis */}
         <line
           x1={-xAxisLength / 2}
@@ -96,24 +103,10 @@ export function Simulation() {
 
         <Mirror rayCompute={rayCompute} />
         {/* Object */}
-        <rect
-          x={objectX()}
-          y={-rayCompute.objectHeight() * CM_TO_PX}
-          width={OBJ_W_PX}
-          height={objectHeightPx()}
-          fill="#fff"
-          stroke="#222"
-        />
+        <Candle rayCompute={rayCompute} image={false} />
 
-        <rect
-          x={imageX()}
-          y={imageY()}
-          width={imageWidthPx()}
-          height={imageHeightPx()}
-          fill="#fff"
-          stroke="#222"
-          opacity={0.5}
-        />
+        {/* Image */}
+        <Candle rayCompute={rayCompute} image={true} />
         <For
           each={[
             rayCompute.pfRay(),
@@ -132,6 +125,7 @@ export function Simulation() {
                   <polyline
                     points={ray.incident.map((p) => toPointStr(p)).join(" ")}
                     class="ray-incident"
+                    marker-end={`url(#${incidentArrow})`}
                   />
                 )}
 
@@ -139,6 +133,7 @@ export function Simulation() {
                   <polyline
                     points={ray.reflected.map((p) => toPointStr(p)).join(" ")}
                     class="ray-reflected"
+                    marker-end={`url(#${reflectedArrow})`}
                   />
                 )}
                 {ray.extended && (
@@ -146,6 +141,16 @@ export function Simulation() {
                     points={ray.extended.map((p) => toPointStr(p)).join(" ")}
                     class="ray-reflected"
                     stroke-dasharray="4 4"
+                  />
+                )}
+                {ray.extendedIncident && (
+                  <polyline
+                    points={ray.extendedIncident
+                      .map((p) => toPointStr(p))
+                      .join(" ")}
+                    class="ray-ext-incident"
+                    stroke-dasharray="4 4"
+                    stroke-width="1"
                   />
                 )}
               </>
@@ -220,6 +225,7 @@ export function Simulation() {
 type ControlsProps = {
   rayCompute: ReturnType<typeof createRayCompute>;
 };
+
 function Controls({ rayCompute }: ControlsProps) {
   const focusId = createUniqueId();
   const curveId = createUniqueId();
