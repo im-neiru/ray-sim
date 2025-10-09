@@ -1,7 +1,7 @@
 // utils/rayCompute.ts
 import { createMemo, createSignal } from "solid-js";
 
-type Point = { x: number; y: number };
+export type Point = { x: number; y: number };
 export type RayData = {
   incident?: [Point, Point];
   reflected?: [Point, Point];
@@ -15,7 +15,7 @@ export const HEIGHT_RANGE: Range = { min: 4, max: 20 };
 export const RADIUS_RANGE: Range = { min: 64, max: 150 };
 export const CM_TO_PX = 4;
 export const OBJ_W_PX = 6;
-export const MIRROR_HEIGHT = 64;
+export const MIRROR_HEIGHT = 90;
 
 export function createRayCompute() {
   const [radius, setRadius] = createSignal(100);

@@ -94,12 +94,7 @@ export function Simulation() {
           class="x-axis"
         />
 
-        <Mirror
-          cx={0}
-          cy={0}
-          height={MIRROR_HEIGHT * CM_TO_PX}
-          rayCompute={rayCompute}
-        />
+        <Mirror rayCompute={rayCompute} />
         {/* Object */}
         <rect
           x={objectX()}

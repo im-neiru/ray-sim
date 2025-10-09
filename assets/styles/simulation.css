@@ -182,6 +182,7 @@ svg.simulation line.x-axis {
 svg.simulation path.mirror {
   stroke-width: 4px;
   stroke: var(--mirror-fill);
+  stroke-linecap: round;
   fill: transparent;
 }
 

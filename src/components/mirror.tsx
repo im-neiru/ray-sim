@@ -1,35 +1,44 @@
-import { CM_TO_PX, type createRayCompute } from "@utils";
+import {
+  CM_TO_PX,
+  type createRayCompute,
+  MIRROR_HEIGHT,
+  type Point,
+} from "@utils";
 import { createMemo } from "solid-js";
 
 type MirrorProps = {
-  cx: number;
-  cy: number;
-  height: number;
   rayCompute: ReturnType<typeof createRayCompute>;
 };
 
 export function Mirror(props: MirrorProps) {
-  const { cx, cy, height, rayCompute } = props;
+  const { rayCompute } = props;
 
   const d = createMemo(() => {
-    const halfHeight = height * 0.5;
-    const radiusRaw = rayCompute.radius() * CM_TO_PX;
-    const isConvex = rayCompute.isConvex();
+    const oppositeSide = MIRROR_HEIGHT * CM_TO_PX * 0.5;
+    const hypotenuse = Math.abs(rayCompute.radius()) * CM_TO_PX;
+    const adjacentSide = Math.sqrt(
+      hypotenuse * hypotenuse - oppositeSide * oppositeSide
+    );
 
-    const y1 = cy - halfHeight;
-    const y2 = cy + halfHeight;
+    const endX = rayCompute.isConvex()
+      ? -(adjacentSide - hypotenuse)
+      : adjacentSide - hypotenuse;
 
-    if (Math.abs(radiusRaw) < 0.001) {
-      return `M ${cx} ${y1} L ${cx} ${y2}`;
-    }
+    const startPoint: Point = {
+      x: endX,
+      y: -oppositeSide,
+    };
 
-    const radius = Math.abs(radiusRaw);
+    const endPoint: Point = {
+      x: endX,
+      y: oppositeSide,
+    };
 
-    const sweepFlag = isConvex ? 0 : 1;
+    const sweepFlag = rayCompute.isConvex() ? 0 : 1;
 
     return [
-      `M ${cx} ${y1}`,
-      `A ${radius} ${radius} 0 0 ${sweepFlag} ${cx} ${y2}`,
+      `M ${startPoint.x} ${startPoint.y}`,
+      `A ${hypotenuse} ${hypotenuse} 0 0 ${sweepFlag} ${endPoint.x} ${endPoint.y}`,
     ].join(" ");
   });
 
