@@ -21,7 +21,7 @@ export const HEIGHT_RANGE: Range = { min: 4, max: 32 };
 export const RADIUS_RANGE: Range = { min: 64, max: 150 };
 export const CM_TO_PX = 4;
 export const OBJ_W_PX = 6;
-export const MIRROR_HEIGHT = 128;
+export const MIRROR_HEIGHT = 96;
 
 function addPoint(a: Point, b: Point) {
   return { x: a.x + b.x, y: a.y + b.y };
