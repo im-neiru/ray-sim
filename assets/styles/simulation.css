@@ -204,6 +204,11 @@ svg.simulation polyline.ray-incident {
   stroke-width: 4px;
 }
 
+svg.simulation polyline.ray-ext-incident {
+  stroke: var(--ray-incident);
+  stroke-width: 1px;
+}
+
 svg.simulation polyline.ray-reflected {
   stroke: var(--ray-reflected);
   stroke-width: 2px;

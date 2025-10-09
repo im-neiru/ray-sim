@@ -6,6 +6,7 @@ export type RayData = {
   incident?: [Point, Point];
   reflected?: [Point, Point];
   extended?: [Point, Point];
+  extendedIncident?: [Point, Point];
 };
 
 type Range = { min: number; max: number };
@@ -16,8 +17,8 @@ export type RayVisibility = {
   v: boolean;
 };
 
-export const DISTANCE_RANGE: Range = { min: 30, max: 125 };
-export const HEIGHT_RANGE: Range = { min: 4, max: 20 };
+export const DISTANCE_RANGE: Range = { min: 24, max: 125 };
+export const HEIGHT_RANGE: Range = { min: 4, max: 32 };
 export const RADIUS_RANGE: Range = { min: 64, max: 150 };
 export const CM_TO_PX = 4;
 export const OBJ_W_PX = 6;
@@ -42,12 +43,14 @@ export function createRayCompute() {
     if (Math.abs(u - f) < 1e-9) return Infinity;
     return (u * f) / (u - f);
   });
+
   const magnification = createMemo(() => {
     const v = imageDistance();
     const u = distance();
     if (!Number.isFinite(v)) return Infinity;
     return -(v / u);
   });
+
   const imageHeight = createMemo(() => {
     const m = magnification();
     if (!Number.isFinite(m)) return Infinity;
@@ -132,6 +135,37 @@ export function createRayCompute() {
 
     const obj = objectPoint();
     const img = imagePoint();
+
+    if (isConvex()) {
+      const angleR = Math.atan2(imageHeight(), radius() + distance());
+      const angleF = Math.asin((focalLength() * Math.sin(angleR)) / radius());
+      const angleS = Math.PI - (angleF + angleR);
+
+      const hit: Point = {
+        x: Math.cos(angleS) * radius() + radius(),
+        y: img.y,
+      };
+
+      return {
+        incident: [obj, hit],
+        extended: [hit, img],
+        reflected: [
+          hit,
+          {
+            x: obj.x + 2,
+            y: img.y,
+          },
+        ],
+        extendedIncident: [
+          hit,
+          {
+            x: focalLength(),
+            y: 0,
+          },
+        ],
+      };
+    }
+
     const f = isConvex() ? -focalLength() : focalLength();
     const focus: Point = { x: f, y: 0 };
 

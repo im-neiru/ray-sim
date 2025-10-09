@@ -69,6 +69,9 @@ export function Simulation() {
     return h >= 0 ? -h * CM_TO_PX : 0;
   });
 
+  const incidentArrow = createUniqueId();
+  const reflectedArrow = createUniqueId();
+
   return (
     <>
       {/* biome-ignore lint/a11y/noSvgWithoutTitle: it is just a simulation */}{" "}
@@ -84,6 +87,34 @@ export function Simulation() {
           return false;
         }}
       >
+        <defs>
+          <marker
+            id={incidentArrow}
+            viewBox="0 0 6 6"
+            refX="3"
+            refY="3"
+            marker-width="6"
+            marker-height="6"
+            orient="auto-start-reverse"
+            fill="var(--ray-incident)"
+          >
+            <path d="M 0 0 L 6 3 L 0 6 z" />
+          </marker>
+
+          <marker
+            id={reflectedArrow}
+            viewBox="0 0 6 6"
+            refX="3"
+            refY="3"
+            marker-width="6"
+            marker-height="6"
+            orient="auto-start-reverse"
+            fill="var(--ray-reflected)"
+          >
+            <path d="M 0 0 L 6 3 L 0 6 z" />
+          </marker>
+        </defs>
+
         {/* X-axis */}
         <line
           x1={-xAxisLength / 2}
@@ -132,6 +163,7 @@ export function Simulation() {
                   <polyline
                     points={ray.incident.map((p) => toPointStr(p)).join(" ")}
                     class="ray-incident"
+                    marker-end={`url(#${incidentArrow})`}
                   />
                 )}
 
@@ -139,6 +171,7 @@ export function Simulation() {
                   <polyline
                     points={ray.reflected.map((p) => toPointStr(p)).join(" ")}
                     class="ray-reflected"
+                    marker-end={`url(#${reflectedArrow})`}
                   />
                 )}
                 {ray.extended && (
@@ -146,6 +179,16 @@ export function Simulation() {
                     points={ray.extended.map((p) => toPointStr(p)).join(" ")}
                     class="ray-reflected"
                     stroke-dasharray="4 4"
+                  />
+                )}
+                {ray.extendedIncident && (
+                  <polyline
+                    points={ray.extendedIncident
+                      .map((p) => toPointStr(p))
+                      .join(" ")}
+                    class="ray-ext-incident"
+                    stroke-dasharray="4 4"
+                    stroke-width="1"
                   />
                 )}
               </>
