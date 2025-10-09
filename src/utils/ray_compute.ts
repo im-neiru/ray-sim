@@ -25,15 +25,15 @@ export const OBJ_W_PX = 6;
 export const MIRROR_HEIGHT = 90;
 
 export function createRayCompute() {
-  const [radius, setRadius] = createSignal(100);
-  const [distance, setDistance] = createSignal(40);
-  const [isConvex, setIsConvex] = createSignal(true);
+  const [radius, setRadius] = createSignal(96);
+  const [distance, setDistance] = createSignal(66);
+  const [isConvex, setIsConvex] = createSignal(false);
   const [objectHeight, setObjectHeight] = createSignal(16);
   const [rayVisibility, setRayVisibility] = createSignal<RayVisibility>({
-    pf: true,
+    pf: false,
     fp: true,
-    cc: true,
-    v: true,
+    cc: false,
+    v: false,
   });
 
   const focalLength = createMemo(() => radius() * 0.5);
@@ -164,34 +164,59 @@ export function createRayCompute() {
           },
         ],
       };
-    }
-
-    const f = isConvex() ? -focalLength() : focalLength();
-    const focus: Point = { x: f, y: 0 };
-
-    const hitY = linearYAtX(obj, focus, 0);
-    const hit: Point = { x: 0, y: hitY };
-
-    const result: RayData = {
-      incident: [obj, hit],
-      reflected: [
-        hit,
-        makeBehindPoint(
-          hit,
-          img,
-          isConvex() ? Math.max(distance(), 30) : focalLength()
-        ),
-      ],
-    };
-
-    if (isVirtual()) {
-      result.extended = [hit, img];
     } else {
-      result.reflected = [hit, img];
-      result.extended = undefined;
+      if (isVirtual()) {
+        return undefined;
+      }
+
+      const angleR = Math.PI - Math.atan2(-imageHeight(), focalLength());
+      const angleF = Math.asin((focalLength() * Math.sin(angleR)) / radius());
+      const angleS = Math.PI - (angleF + angleR);
+
+      const hit: Point = {
+        x: Math.cos(angleS) * radius() - radius(),
+        y: Math.sin(angleS) * radius(),
+      };
+
+      return {
+        incident: [obj, hit],
+
+        reflected: [
+          hit,
+          {
+            x: img.x + 2,
+            y: hit.y,
+          },
+        ],
+      };
     }
 
-    return result;
+    // const f = isConvex() ? -focalLength() : focalLength();
+    // const focus: Point = { x: f, y: 0 };
+
+    // const hitY = linearYAtX(obj, focus, 0);
+    // const hit: Point = { x: 0, y: hitY };
+
+    // const result: RayData = {
+    //   incident: [obj, hit],
+    //   reflected: [
+    //     hit,
+    //     makeBehindPoint(
+    //       hit,
+    //       img,
+    //       isConvex() ? Math.max(distance(), 30) : focalLength()
+    //     ),
+    //   ],
+    // };
+
+    // if (isVirtual()) {
+    //   result.extended = [hit, img];
+    // } else {
+    //   result.reflected = [hit, img];
+    //   result.extended = undefined;
+    // }
+
+    // return result;
   });
 
   const ccRay = createMemo<RayData | undefined>(() => {
