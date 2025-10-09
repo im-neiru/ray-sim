@@ -9,6 +9,12 @@ export type RayData = {
 };
 
 type Range = { min: number; max: number };
+export type RayVisibility = {
+  pf: boolean;
+  fp: boolean;
+  cc: boolean;
+  v: boolean;
+};
 
 export const DISTANCE_RANGE: Range = { min: 30, max: 125 };
 export const HEIGHT_RANGE: Range = { min: 4, max: 20 };
@@ -22,6 +28,12 @@ export function createRayCompute() {
   const [distance, setDistance] = createSignal(40);
   const [isConvex, setIsConvex] = createSignal(true);
   const [objectHeight, setObjectHeight] = createSignal(16);
+  const [rayVisibility, setRayVisibility] = createSignal<RayVisibility>({
+    pf: true,
+    fp: true,
+    cc: true,
+    v: true,
+  });
 
   const focalLength = createMemo(() => radius() * 0.5);
   const imageDistance = createMemo(() => {
@@ -77,7 +89,9 @@ export function createRayCompute() {
     return { x: hit.x - dx * factor, y: hit.y - dy * factor };
   }
 
-  const pfRay = createMemo<RayData>(() => {
+  const pfRay = createMemo<RayData | undefined>(() => {
+    if (rayVisibility().pf === false) return undefined;
+
     const obj = objectPoint();
     const img = imagePoint();
     const hit: Point = { x: 0, y: obj.y };
@@ -113,7 +127,9 @@ export function createRayCompute() {
     return result;
   });
 
-  const fpRay = createMemo<RayData>(() => {
+  const fpRay = createMemo<RayData | undefined>(() => {
+    if (rayVisibility().fp === false) return undefined;
+
     const obj = objectPoint();
     const img = imagePoint();
     const f = isConvex() ? -focalLength() : focalLength();
@@ -144,7 +160,9 @@ export function createRayCompute() {
     return result;
   });
 
-  const ccRay = createMemo<RayData>(() => {
+  const ccRay = createMemo<RayData | undefined>(() => {
+    if (rayVisibility().cc === false) return undefined;
+
     const obj = objectPoint();
     const img = imagePoint();
 
@@ -183,7 +201,9 @@ export function createRayCompute() {
     return result;
   });
 
-  const vRay = createMemo<RayData>(() => {
+  const vRay = createMemo<RayData | undefined>(() => {
+    if (rayVisibility().v === false) return undefined;
+
     const obj = objectPoint();
     const img = imagePoint();
     const hit: Point = { x: 0, y: 0 };
@@ -247,5 +267,7 @@ export function createRayCompute() {
     fpRay,
     ccRay,
     vRay,
+    rayVisibility,
+    setRayVisibility,
   } as const;
 }

@@ -4,9 +4,9 @@ import {
   createRayCompute,
   DISTANCE_RANGE,
   HEIGHT_RANGE,
-  MIRROR_HEIGHT,
   OBJ_W_PX,
   RADIUS_RANGE,
+  type RayVisibility,
 } from "@utils";
 import {
   createMemo,
@@ -120,7 +120,7 @@ export function Simulation() {
             rayCompute.fpRay(),
             rayCompute.ccRay(),
             rayCompute.vRay(),
-          ]}
+          ].filter((ray) => ray !== undefined)}
         >
           {(ray) => {
             const toPointStr = (p: { x: number; y: number }) =>
@@ -406,7 +406,39 @@ function Controls({ rayCompute }: ControlsProps) {
             }}
           />
         </div>
+        <div>
+          <RaySwitch rayCompute={rayCompute} ray="pf" />
+          <RaySwitch rayCompute={rayCompute} ray="fp" />
+          <RaySwitch rayCompute={rayCompute} ray="cc" />
+          <RaySwitch rayCompute={rayCompute} ray="v" />
+        </div>
       </div>
+    </div>
+  );
+}
+
+type RaySwitchProps = {
+  rayCompute: ReturnType<typeof createRayCompute>;
+  ray: keyof RayVisibility;
+};
+
+function RaySwitch({ ray, rayCompute }: RaySwitchProps) {
+  const id = createUniqueId();
+
+  return (
+    <div class="ray-switch">
+      <input
+        type="checkbox"
+        id={id}
+        checked={rayCompute.rayVisibility()[ray]}
+        on:change={() => {
+          rayCompute.setRayVisibility((old) => ({
+            ...old,
+            [ray]: !old[ray],
+          }));
+        }}
+      />
+      <label for={id}>{String(ray).toUpperCase()} Ray</label>
     </div>
   );
 }
