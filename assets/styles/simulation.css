@@ -229,7 +229,7 @@ div.control-part {
   align-items: center;
 }
 
-div.control-part input[type="number"] {
+div.control-part input[type="text"] {
   appearance: textfield;
   -moz-appearance: textfield;
   -webkit-appearance: none;
@@ -259,8 +259,8 @@ div.control-part select {
   margin-left: 8px;
 }
 
-div.control-part input[type="number"]::-webkit-inner-spin-button,
-div.control-part input[type="number"]::-webkit-outer-spin-button {
+div.control-part input[type="text"]::-webkit-inner-spin-button,
+div.control-part input[type="text"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
