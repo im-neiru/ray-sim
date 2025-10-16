@@ -16,6 +16,7 @@ import {
 } from "solid-js";
 import { Candle } from "./candle";
 import { Mirror } from "./mirror";
+import { NumericInput } from "./numeric-input";
 
 export function Simulation() {
   const rayCompute = createRayCompute();
@@ -227,7 +228,6 @@ type ControlsProps = {
 };
 
 function Controls({ rayCompute }: ControlsProps) {
-  const focusId = createUniqueId();
   const curveId = createUniqueId();
   const mirrorTypeId = createUniqueId();
   const distanceId = createUniqueId();
@@ -266,53 +266,17 @@ function Controls({ rayCompute }: ControlsProps) {
       <div class="stack">
         <div>
           <b>Mirror Options</b>
-          <div class="control-part">
-            <label for={focusId}>Focal Length:</label>
+          <NumericInput
+            label="Height"
+            getValue={rayCompute.focalLength}
+            setValue={rayCompute.setFocalLength}
+          />
 
-            <div>
-              <input
-                id={`${curveId}n`}
-                type="number"
-                min={RADIUS_RANGE.min / 2}
-                max={RADIUS_RANGE.max / 2}
-                step="0.01"
-                value={Math.min(
-                  Math.abs(rayCompute.focalLength()),
-                  RADIUS_RANGE.max / 2
-                ).toFixed(2)}
-                on:input={(ev) => {
-                  rayCompute.setFocalLength(
-                    Number(ev.target.valueAsNumber.toFixed(2))
-                  );
-                }}
-              />
-              <span>cm</span>
-            </div>
-          </div>
-
-          <div class="control-part">
-            <label for={curveId}>Curvature: </label>
-
-            <div>
-              <input
-                id={`${curveId}n`}
-                type="number"
-                min={RADIUS_RANGE.min}
-                max={RADIUS_RANGE.max}
-                step="0.01"
-                value={Math.min(
-                  Math.abs(rayCompute.radius()),
-                  RADIUS_RANGE.max
-                ).toFixed(2)}
-                on:input={(ev) => {
-                  rayCompute.setRadius(
-                    Number(ev.target.valueAsNumber.toFixed(2))
-                  );
-                }}
-              />
-              <span>cm</span>
-            </div>
-          </div>
+          <NumericInput
+            label="Curvature"
+            getValue={rayCompute.radius}
+            setValue={rayCompute.setRadius}
+          />
 
           <input
             id={curveId}
@@ -342,26 +306,11 @@ function Controls({ rayCompute }: ControlsProps) {
         </div>
         <div>
           <b>Object Options</b>
-          <div class="control-part">
-            <label for={distanceId}>Distance from mirror:</label>
-
-            <div>
-              <input
-                id={`${distanceId}n`}
-                type="number"
-                min={DISTANCE_RANGE.min}
-                max={DISTANCE_RANGE.max}
-                step="0.01"
-                value={Math.abs(rayCompute.distance()).toFixed(2)}
-                on:input={(ev) => {
-                  rayCompute.setDistance(
-                    Number(ev.target.valueAsNumber.toFixed(2))
-                  );
-                }}
-              />
-              <span>cm</span>
-            </div>
-          </div>
+          <NumericInput
+            label="Distance"
+            getValue={rayCompute.distance}
+            setValue={rayCompute.setDistance}
+          />
 
           <input
             id={distanceId}
@@ -377,26 +326,11 @@ function Controls({ rayCompute }: ControlsProps) {
             }}
           />
 
-          <div class="control-part">
-            <label for={heightId}>Height:</label>
-
-            <div>
-              <input
-                id={`${heightId}n`}
-                type="number"
-                min={HEIGHT_RANGE.min}
-                max={HEIGHT_RANGE.max}
-                step="0.01"
-                value={Math.abs(rayCompute.objectHeight()).toFixed(2)}
-                on:input={(ev) => {
-                  rayCompute.setObjectHeight(
-                    Number(ev.target.valueAsNumber.toFixed(2))
-                  );
-                }}
-              />
-              <span>cm</span>
-            </div>
-          </div>
+          <NumericInput
+            label="Height"
+            getValue={rayCompute.objectHeight}
+            setValue={rayCompute.setObjectHeight}
+          />
 
           <input
             id={heightId}
